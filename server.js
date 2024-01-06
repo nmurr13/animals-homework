@@ -70,12 +70,7 @@ app.get("/animals/seed", async (req, res) => {
 
     // array of starter animals
     const startAnimals = [
-        {
-            species: "Wolf",
-            extinct: false,
-            location: "Eurasia and North America",
-            lifeExpectancy: 15,
-        },
+       
         {
             species: "Tiger",
             extinct: false,
@@ -122,7 +117,7 @@ app.get("/animals/seed", async (req, res) => {
     res.send("There was error, read logs for error details");}
   });
 
-// Index Route Get -> /fruits
+// Index Route Get -> /animals
 app.get("/animals", async (req, res) => {
     try {
       // get all animals
@@ -135,16 +130,85 @@ app.get("/animals", async (req, res) => {
       res.status(400).send("error, read logs for details");
     }
   });
-  // show route
-app.get("/animals/:id", (req, res) => {
-    // get the id from params
-    const id = req.params.id
 
-    // find the particular animal from the database
-    Animal.findById(id, (err, animal) => {
-        // render the template with the data from the database
+  // New
+  app.get("/animals/new", (req, res) => {
+    res.render("animals/new.ejs")
+  })
+
+  // Create Route (Post to /fruits)
+app.post("/animals", async (req, res) => {
+    try {
+      // check if extinct is true
+      // expression ? true : false (ternary operator)
+      req.body.extinct = req.body.extinct === "on" ? true : false;
+      // create the animal in the database
+      await Animal.create(req.body);
+      // redirect back to main page
+      res.redirect("/animals");
+    } catch (error) {
+      console.log("-----", error.message, "------");
+      res.status(400).send("error, read logs for details");
+    }
+  });
+
+  // Edit Route (Get to /animals/:id/edit)
+app.get("/animals/:id/edit", async (req, res) => {
+    try {
+      // get the id from params
+      const id = req.params.id;
+      // get the animal from the db
+      const animal = await Animal.findById(id);
+      //render the template
+      res.render("animals/edit.ejs", { animal });
+    } catch (error) {
+      console.log("-----", error.message, "------");
+      res.status(400).send("error, read logs for details");
+    }
+  });
+
+  // The Update Route (Put to /animals/:id)
+app.put("/animals/:id", async (req, res) => {
+    try {
+      // get the id
+      const id = req.params.id;
+      // update extinct in req.body
+      req.body.extinct = req.body.extinct === "on" ? true : false;
+      // update the animal in the database
+      await Animal.findByIdAndUpdate(id, req.body);
+      // res.redirect back to show page
+      res.redirect(`/animals/${id}`);
+    } catch (error) {
+      console.log("-----", error.message, "------");
+      res.status(400).send("error, read logs for details");
+    }
+  });
+
+  // The Delete Route (delete to /animals/:id)
+app.delete("/animals/:id", async (req, res) => {
+    // get the id
+    const id = req.params.id
+    // delete the animal
+    await Animal.findByIdAndDelete(id)
+    // redirect to main page
+    res.redirect("/animals")
+  });
+  
+// The Show Route (Get to /animals/:id)
+app.get("/animals/:id", async (req, res) => {
+    try{
+        // get the id from params
+        const id = req.params.id
+
+        // find the particular animal from the database
+        const animal = await Animal.findById(id)
+
+        // render the template with the animal
         res.render("animals/show.ejs", {animal})
-    })
+    }catch(error){
+        console.log("-----", error.message, "------")
+        res.status(400).send("error, read logs for details")
+    }
 })
 //////////////////////////////////////////////
 // Server Listener
