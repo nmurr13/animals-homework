@@ -13,59 +13,6 @@ const router = express.Router()
 ////////////////////////////////////////////
 // Routes
 ////////////////////////////////////////////
-
-router.get("/seed", async (req, res) => {
-    try {
-
-    // array of starter animals
-    const startAnimals = [
-       
-        {
-            species: "Tiger",
-            extinct: false,
-            location: "Asia",
-            lifeExpectancy: 20,
-        },
-        {
-            species: "Dodo",
-            extinct: true,
-            location: "Mauritius",
-            lifeExpectancy: 20,
-        },
-        {
-            species: "Wolf",
-            extinct: false,
-            location: "Eurasia and North America",
-            lifeExpectancy: 15,
-        },
-        {
-            species: "Crocodile",
-            extinct: false,
-            location: "Every Continent except Europe",
-            lifeExpectancy: 100,
-        },
-        {
-            species: "Cat",
-            extinct: false,
-            location: "Worldwide",
-            lifeExpectancy: 15,
-        },
-         
-        ]
-  
-    // Delete All Animals
-    await Animal.deleteMany({});
-
-    // Seed my starter animals
-    const animals = await Animal.create(startAnimals);
-
-    // send animals as response
-    res.json(animals);
-  } catch (error) {
-    console.log(error.message);
-    res.send("There was error, read logs for error details");}
-  });
-
 // Index Route Get -> /animals
 router.get("/", async (req, res) => {
     try {
