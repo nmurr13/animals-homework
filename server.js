@@ -65,7 +65,8 @@ app.get("/", (req, res) => {
     res.send("your server is running... better catch it.")
 })
 
-app.get("/animals/seed", (req, res) => {
+app.get("/animals/seed", async (req, res) => {
+    try {
 
     // array of starter animals
     const startAnimals = [
@@ -108,16 +109,43 @@ app.get("/animals/seed", (req, res) => {
          
         ]
   
-    // Delete all animals
-    Animal.remove({}, (err, data) => {
-      // Seed Starter Animals
-      Animal.create(startAnimals,(err, data) => {
-          // send created animals as response to confirm creation
-          res.json(data);
-        }
-      );
-    });
+    // Delete All Animals
+    await Animal.deleteMany({});
+
+    // Seed my starter animals
+    const animals = await Animal.create(startAnimals);
+
+    // send animals as response
+    res.json(animals);
+  } catch (error) {
+    console.log(error.message);
+    res.send("There was error, read logs for error details");}
   });
+
+// Index Route Get -> /fruits
+app.get("/animals", async (req, res) => {
+    try {
+      // get all animals
+      const animals = await Animal.find({});
+      // render a template
+      // animals/index.ejs = views/animals/index.ejs
+      res.render("animals/index.ejs", {animals})
+    } catch (error) {
+      console.log("-----", error.message, "------");
+      res.status(400).send("error, read logs for details");
+    }
+  });
+  // show route
+app.get("/animals/:id", (req, res) => {
+    // get the id from params
+    const id = req.params.id
+
+    // find the particular animal from the database
+    Animal.findById(id, (err, animal) => {
+        // render the template with the data from the database
+        res.render("animals/show.ejs", {animal})
+    })
+})
 //////////////////////////////////////////////
 // Server Listener
 //////////////////////////////////////////////

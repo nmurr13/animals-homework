@@ -6,12 +6,13 @@
     <%- include("../partials/header.ejs") %>
     <main>
       <div>
-        <% for (fruit of fruits) { %>
+        <% for (animal of animals) { %>
 
         <article>
-          <a href="/fruits/<%= fruit._id %>">
+          <a href="/animals/<%= animal._id %>">
             <h2>
-              <%= fruit.name %> - <%= fruit.readyToEat ? "Ripe" : "Not Ripe" %>
+              <%= animal.species %> - <%= animal.extinct ? "Extinct" : "Not Extinct" %>
+              - <%= animal.location %>- <%= animal.lifeExpectancy %>
             </h2>
           </a>
         </article>
